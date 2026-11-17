@@ -14,3 +14,4 @@ require (
 	go.opentelemetry.io/otel/trace v1.24.0
 	golang.org/x/sync v0.6.0
 )
+

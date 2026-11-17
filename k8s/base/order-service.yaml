@@ -83,3 +83,4 @@ spec:
       targetPort: 8082
   selector:
     app: order-service
+

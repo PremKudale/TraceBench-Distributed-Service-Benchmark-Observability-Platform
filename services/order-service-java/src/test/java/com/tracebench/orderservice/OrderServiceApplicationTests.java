@@ -45,3 +45,4 @@ class OrderServiceApplicationTests {
         assertEquals(processed.getOrderId(), retrieved.getOrderId());
     }
 }
+

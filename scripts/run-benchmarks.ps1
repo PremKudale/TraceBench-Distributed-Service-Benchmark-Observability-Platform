@@ -5,3 +5,4 @@ param (
 
 Write-Host "Running TraceBench Automated Benchmark Suite..." -ForegroundColor Cyan
 python benchmarks/runner.py --url $Url --profile $Profile --output benchmarks/reports/comparison_report.md
+

@@ -90,3 +90,4 @@ func BenchmarkParser_ParseJSON(b *testing.B) {
 		model.ReleaseLogRecord(rec)
 	}
 }
+

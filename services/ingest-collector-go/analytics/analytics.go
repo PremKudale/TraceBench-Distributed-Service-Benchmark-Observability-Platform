@@ -209,3 +209,4 @@ func (e *Engine) QueryRecentLogs(req model.QueryRequest) ([]model.LogRecord, int
 
 	return matches, len(matches)
 }
+

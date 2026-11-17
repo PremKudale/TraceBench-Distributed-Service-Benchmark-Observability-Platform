@@ -46,3 +46,4 @@ TraceBench is explicitly engineered to minimize Go runtime heap allocations in h
 2. **Zero-Allocation Parser:** Reuses `LogRecord` instances across worker batch cycles, reducing heap allocation pressure by >80%.
 3. **PostgreSQL Binary COPY Protocol (`pgx.CopyFrom`):** Ingests batches of 1,000–2,000 records per roundtrip instead of single SQL queries, scaling persistence throughput by over 10x.
 4. **Ring-Buffered Worker Queues:** Provides non-blocking ingestion handoffs with dynamic backpressure handling to protect microservice stability.
+

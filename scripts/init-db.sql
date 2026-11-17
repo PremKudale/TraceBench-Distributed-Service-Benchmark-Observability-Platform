@@ -81,3 +81,4 @@ VALUES
     (NOW() - INTERVAL '5 minutes', 'gateway-service-go', 25600, 24800, 680, 120, 4.2, 12.1),
     (NOW() - INTERVAL '5 minutes', 'ingest-collector-go', 51200, 50900, 250, 50, 2.1, 6.8)
 ON CONFLICT DO NOTHING;
+

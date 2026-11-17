@@ -57,3 +57,4 @@ public class OpenTelemetryConfig {
         return openTelemetry.getTracer(serviceName, "1.0.0");
     }
 }
+

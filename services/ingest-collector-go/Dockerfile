@@ -36,3 +36,4 @@ HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
   CMD curl -f http://localhost:8081/health || exit 1
 
 ENTRYPOINT ["/app/ingest-collector"]
+

@@ -68,3 +68,4 @@ func (p *BufferPool) Stats() (hits, misses uint64, hitRatio float64) {
 	}
 	return h, m, ratio
 }
+

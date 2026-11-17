@@ -296,3 +296,4 @@ func (m *MemoryStorage) Ping(ctx context.Context) error {
 }
 
 func (m *MemoryStorage) Close() {}
+

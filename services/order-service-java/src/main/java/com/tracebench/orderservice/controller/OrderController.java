@@ -50,3 +50,4 @@ public class OrderController {
         return prometheusRegistry.scrape();
     }
 }
+

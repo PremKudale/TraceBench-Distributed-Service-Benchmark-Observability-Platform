@@ -16,3 +16,4 @@ echo " - Grafana Dashboards:     http://localhost:3000 (admin / tracebench)"
 echo " - Prometheus:             http://localhost:9090"
 echo " - Jaeger Tracing UI:      http://localhost:16686"
 echo " - PostgreSQL:             localhost:5432 (tracebench / tracebench)"
+

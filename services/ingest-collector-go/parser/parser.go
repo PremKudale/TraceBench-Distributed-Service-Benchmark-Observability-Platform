@@ -200,3 +200,4 @@ func normalizeLogLevel(lvl string) model.LogLevel {
 		return model.LevelInfo
 	}
 }
+

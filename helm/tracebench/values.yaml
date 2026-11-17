@@ -77,3 +77,4 @@ observability:
     enabled: true
   jaeger:
     enabled: true
+

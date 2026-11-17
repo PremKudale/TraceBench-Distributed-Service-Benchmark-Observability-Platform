@@ -15,3 +15,4 @@ data:
   ORDER_SERVICE_URL: "http://order-service.tracebench.svc.cluster.local:8082"
   INGEST_SERVICE_URL: "http://ingest-collector.tracebench.svc.cluster.local:8081"
   OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.tracebench.svc.cluster.local:4318"
+

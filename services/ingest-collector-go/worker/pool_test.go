@@ -72,3 +72,4 @@ func TestWorkerPool_ConcurrentIngestion(t *testing.T) {
 		t.Errorf("expected %d total in analytics, got %d", numGoroutines*recordsPerGoroutine, total)
 	}
 }
+

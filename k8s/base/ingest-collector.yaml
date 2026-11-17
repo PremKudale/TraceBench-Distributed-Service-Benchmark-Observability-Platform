@@ -117,3 +117,4 @@ spec:
       targetPort: 5140
   selector:
     app: ingest-collector
+

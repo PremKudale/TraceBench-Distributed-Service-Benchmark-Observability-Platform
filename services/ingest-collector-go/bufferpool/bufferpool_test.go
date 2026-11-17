@@ -58,3 +58,4 @@ func BenchmarkBufferPool_WithPool(b *testing.B) {
 		pool.Put(buf)
 	}
 }
+

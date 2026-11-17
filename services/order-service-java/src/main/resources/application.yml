@@ -35,3 +35,4 @@ otel:
 ingest:
   collector:
     url: ${INGEST_COLLECTOR_URL:http://localhost:8081/api/v1/logs/ingest}
+

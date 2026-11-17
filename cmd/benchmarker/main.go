@@ -487,3 +487,4 @@ func SaveJSONResult(r *BenchmarkResult, filename string) {
 	_ = os.WriteFile(filename, data, 0644)
 	fmt.Printf("JSON results saved to: %s\n", filename)
 }
+

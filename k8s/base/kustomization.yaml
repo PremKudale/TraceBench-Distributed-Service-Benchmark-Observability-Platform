@@ -13,3 +13,4 @@ resources:
   - gateway.yaml
   - order-service.yaml
   - hpa.yaml
+

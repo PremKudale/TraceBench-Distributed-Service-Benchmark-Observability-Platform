@@ -79,3 +79,4 @@ service LogCollectorService {
   rpc IngestStream(stream LogStreamRequest) returns (stream LogStreamResponse);
   rpc QueryLogs(LogQueryRequest) returns (LogQueryResponse);
 }
+

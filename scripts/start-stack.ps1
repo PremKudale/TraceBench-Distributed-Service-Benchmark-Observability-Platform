@@ -12,3 +12,4 @@ Write-Host " - Grafana Dashboards:     http://localhost:3000 (admin / tracebench
 Write-Host " - Prometheus:             http://localhost:9090"
 Write-Host " - Jaeger Tracing UI:      http://localhost:16686"
 Write-Host " - PostgreSQL:             localhost:5432 (tracebench / tracebench)"
+

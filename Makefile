@@ -47,3 +47,4 @@ k8s-delete:
 clean:
 	rm -rf bin/
 	rm -f benchmark_report.md benchmark_results.json
+

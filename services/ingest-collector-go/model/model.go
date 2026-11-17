@@ -137,3 +137,4 @@ func ReleaseLogRecord(rec *LogRecord) {
 	clear(rec.Metrics)
 	LogRecordPool.Put(rec)
 }
+

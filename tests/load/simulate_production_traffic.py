@@ -80,3 +80,4 @@ if __name__ == "__main__":
     parser.add_argument("--inject-anomalies", action="store_true", default=True)
     args = parser.parse_args()
     run_simulation(args.url, args.duration, args.concurrency, args.inject_anomalies)
+
