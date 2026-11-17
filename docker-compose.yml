@@ -1,0 +1,182 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL - Timeseries Log Storage Sink & Benchmark History
+  postgres:
+    image: postgres:16-alpine
+    container_name: tracebench-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tracebench
+      POSTGRES_PASSWORD: tracebench
+      POSTGRES_DB: tracebench
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tracebench -d tracebench"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - tracebench-net
+
+  # 2. Jaeger - Distributed Tracing Backend & Visualization UI
+  jaeger:
+    image: jaegertracing/all-in-one:1.55
+    container_name: tracebench-jaeger
+    restart: unless-stopped
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" # Web UI
+      - "14268:14268" # Collector HTTP
+    networks:
+      - tracebench-net
+
+  # 3. OpenTelemetry Collector - Unified Telemetry Pipeline
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.96.0
+    container_name: tracebench-otel-collector
+    restart: unless-stopped
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./observability/otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
+      - "8889:8889" # Prometheus metrics exporter
+    depends_on:
+      - jaeger
+    networks:
+      - tracebench-net
+
+  # 4. Prometheus - Metrics Scraper & Timeseries Storage
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: tracebench-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+      - --web.enable-lifecycle
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - tracebench-net
+
+  # 5. Grafana - Centralized Operational Dashboards
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: tracebench-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=tracebench
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+      - jaeger
+      - postgres
+    networks:
+      - tracebench-net
+
+  # 6. TraceBench Ingest Collector (Go) - Concurrent Log Engine
+  ingest-collector:
+    build:
+      context: .
+      dockerfile: services/ingest-collector-go/Dockerfile
+    container_name: tracebench-ingest-collector
+    restart: unless-stopped
+    environment:
+      HTTP_ADDR: ":8081"
+      TCP_ADDR: ":5140"
+      POSTGRES_URL: "postgres://tracebench:tracebench@postgres:5432/tracebench?sslmode=disable"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+      WORKER_COUNT: 16
+      QUEUE_CAPACITY: 50000
+      BATCH_SIZE: 1000
+      FLUSH_INTERVAL_MS: 100
+    ports:
+      - "8081:8081"
+      - "5140:5140"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - tracebench-net
+
+  # 7. TraceBench API Gateway (Go) - Trace Propagator & Reverse Proxy
+  gateway-service:
+    build:
+      context: .
+      dockerfile: services/gateway-service-go/Dockerfile
+    container_name: tracebench-gateway-service
+    restart: unless-stopped
+    environment:
+      PORT: ":8080"
+      ORDER_SERVICE_URL: "http://order-service:8082"
+      INGEST_SERVICE_URL: "http://ingest-collector:8081"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ingest-collector
+      - order-service
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - tracebench-net
+
+  # 8. Order Service (Java 21) - Business Microservice
+  order-service:
+    build:
+      context: services/order-service-java
+      dockerfile: Dockerfile
+    container_name: tracebench-order-service
+    restart: unless-stopped
+    environment:
+      SPRING_APPLICATION_NAME: "order-service-java"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+      INGEST_COLLECTOR_URL: "http://ingest-collector:8081/api/v1/logs/ingest"
+    ports:
+      - "8082:8082"
+    depends_on:
+      - otel-collector
+      - ingest-collector
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/api/v1/orders/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - tracebench-net
+
+networks:
+  tracebench-net:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  prometheus-data:
+  grafana-data:

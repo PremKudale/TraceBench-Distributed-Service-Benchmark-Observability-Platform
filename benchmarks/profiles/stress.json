@@ -1,0 +1,9 @@
+{
+  "profile": "stress",
+  "description": "High-concurrency stress test testing maximum pipeline throughput and backpressure thresholds",
+  "concurrency": 400,
+  "duration_seconds": 60,
+  "target_rps": 0,
+  "batch_size": 50,
+  "payload_type": "batch"
+}

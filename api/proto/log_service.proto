@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package tracebench.v1;
+
+option go_package = "github.com/tracebench/tracebench/api/proto/v1;tracebenchv1";
+
+import "google/protobuf/timestamp.proto";
+
+enum LogLevel {
+  LOG_LEVEL_UNSPECIFIED = 0;
+  LOG_LEVEL_TRACE = 1;
+  LOG_LEVEL_DEBUG = 2;
+  LOG_LEVEL_INFO = 3;
+  LOG_LEVEL_WARN = 4;
+  LOG_LEVEL_ERROR = 5;
+  LOG_LEVEL_FATAL = 6;
+}
+
+message LogRecord {
+  string log_id = 1;
+  string service_name = 2;
+  string environment = 3;
+  LogLevel level = 4;
+  string message = 5;
+  google.protobuf.Timestamp timestamp = 6;
+  string trace_id = 7;
+  string span_id = 8;
+  map<string, string> attributes = 9;
+  map<string, double> metrics = 10;
+  string raw_payload = 11;
+}
+
+message IngestBatchRequest {
+  repeated LogRecord records = 1;
+  string source_agent = 2;
+  int64 sent_at_unix_nano = 3;
+}
+
+message IngestBatchResponse {
+  bool success = 1;
+  uint32 accepted_count = 2;
+  uint32 rejected_count = 3;
+  string error_message = 4;
+  int64 server_time_unix_nano = 5;
+}
+
+message LogStreamRequest {
+  oneof payload {
+    LogRecord record = 1;
+    IngestBatchRequest batch = 2;
+  }
+}
+
+message LogStreamResponse {
+  uint64 ack_sequence = 1;
+  uint32 processed_count = 2;
+  double current_worker_load = 3;
+}
+
+message LogQueryRequest {
+  string service_name = 1;
+  LogLevel min_level = 2;
+  google.protobuf.Timestamp start_time = 3;
+  google.protobuf.Timestamp end_time = 4;
+  string trace_id = 5;
+  string search_query = 6;
+  uint32 limit = 7;
+  uint32 offset = 8;
+}
+
+message LogQueryResponse {
+  repeated LogRecord records = 1;
+  uint64 total_matched = 2;
+  double execution_time_ms = 3;
+}
+
+service LogCollectorService {
+  rpc IngestBatch(IngestBatchRequest) returns (IngestBatchResponse);
+  rpc IngestStream(stream LogStreamRequest) returns (stream LogStreamResponse);
+  rpc QueryLogs(LogQueryRequest) returns (LogQueryResponse);
+}

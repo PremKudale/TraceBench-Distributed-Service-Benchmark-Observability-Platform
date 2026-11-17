@@ -1,0 +1,9 @@
+{
+  "profile": "spike",
+  "description": "Sudden step load jump to evaluate buffer pool queue saturation, latency spikes, and GC recovery",
+  "concurrency": 600,
+  "duration_seconds": 30,
+  "target_rps": 0,
+  "batch_size": 100,
+  "payload_type": "batch"
+}

@@ -1,0 +1,79 @@
+# Default values for tracebench.
+
+global:
+  environment: production
+  logLevel: INFO
+
+ingestCollector:
+  replicaCount: 3
+  image:
+    repository: tracebench/ingest-collector
+    tag: latest
+    pullPolicy: IfNotPresent
+  workers: 32
+  queueCapacity: 100000
+  batchSize: 2000
+  flushIntervalMs: 100
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 15
+    targetCPUUtilizationPercentage: 70
+
+gatewayService:
+  replicaCount: 2
+  image:
+    repository: tracebench/gateway-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: LoadBalancer
+    port: 8080
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+orderService:
+  replicaCount: 2
+  image:
+    repository: tracebench/order-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8082
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1.5Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+postgres:
+  enabled: true
+  persistence:
+    size: 20Gi
+  credentials:
+    user: tracebench
+    db: tracebench
+    existingSecret: ""
+
+observability:
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+  jaeger:
+    enabled: true

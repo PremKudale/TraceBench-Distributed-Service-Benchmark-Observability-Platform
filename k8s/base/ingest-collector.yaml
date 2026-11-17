@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingest-collector
+  namespace: tracebench
+  labels:
+    app: ingest-collector
+    app.kubernetes.io/component: log-collector
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: ingest-collector
+  template:
+    metadata:
+      labels:
+        app: ingest-collector
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8081"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: ingest-collector
+          image: tracebench/ingest-collector:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+              name: http
+            - containerPort: 5140
+              name: syslog
+          env:
+            - name: HTTP_ADDR
+              valueFrom:
+                configMapKeyRef:
+                  name: tracebench-config
+                  key: INGEST_HTTP_ADDR
+            - name: TCP_ADDR
+              valueFrom:
+                configMapKeyRef:
+                  name: tracebench-config
+                  key: INGEST_TCP_ADDR
+            - name: WORKER_COUNT
+              valueFrom:
+                configMapKeyRef:
+                  name: tracebench-config
+                  key: WORKER_COUNT
+            - name: QUEUE_CAPACITY
+              valueFrom:
+                configMapKeyRef:
+                  name: tracebench-config
+                  key: QUEUE_CAPACITY
+            - name: BATCH_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: tracebench-config
+                  key: BATCH_SIZE
+            - name: FLUSH_INTERVAL_MS
+              valueFrom:
+                configMapKeyRef:
+                  name: tracebench-config
+                  key: FLUSH_INTERVAL_MS
+            - name: POSTGRES_URL
+              valueFrom:
+                secretKeyRef:
+                  name: tracebench-secrets
+                  key: POSTGRES_URL
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: tracebench-config
+                  key: OTEL_EXPORTER_OTLP_ENDPOINT
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingest-collector
+  namespace: tracebench
+  labels:
+    app: ingest-collector
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8081
+      targetPort: 8081
+    - name: syslog
+      port: 5140
+      targetPort: 5140
+  selector:
+    app: ingest-collector

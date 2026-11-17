@@ -1,0 +1,62 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "Historical Benchmark Runs (Throughput RPS & Latency SLA)",
+      "type": "table",
+      "targets": [
+        {
+          "datasource": { "type": "postgres", "uid": "PostgreSQL-TraceBench" },
+          "rawSql": "SELECT created_at, workload_profile, concurrency, throughput_rps, latency_p50_ms, latency_p95_ms, latency_p99_ms, cpu_utilization_pct, memory_rss_mb FROM benchmark_runs ORDER BY created_at DESC LIMIT 25;",
+          "refId": "A",
+          "format": "table"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 2,
+      "title": "Throughput Scaling (RPS vs Concurrency)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "sum(rate(tracebench_collector_logs_ingested_total[30s]))",
+          "legendFormat": "Actual Measured Throughput (req/s)",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 3,
+      "title": "P99 Latency vs Concurrency Scaling",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "expr": "histogram_quantile(0.99, sum(rate(tracebench_collector_ingest_duration_seconds_bucket[30s])) by (le)) * 1000",
+          "legendFormat": "P99 Ingestion Latency",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "title": "TraceBench Workload Benchmarks & Latency Scaling",
+  "uid": "benchmark-workload-comparison"
+}

@@ -1,0 +1,29 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+
+  - name: Jaeger
+    type: jaeger
+    access: proxy
+    url: http://jaeger:16686
+    editable: false
+
+  - name: PostgreSQL-TraceBench
+    type: postgres
+    access: proxy
+    url: postgres:5432
+    database: tracebench
+    user: tracebench
+    secureJsonData:
+      password: tracebench
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 10
+      maxIdleConns: 5
+    editable: false

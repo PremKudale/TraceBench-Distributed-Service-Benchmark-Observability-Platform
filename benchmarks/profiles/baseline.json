@@ -1,0 +1,9 @@
+{
+  "profile": "baseline",
+  "description": "Baseline load representing regular steady-state microservice log emission",
+  "concurrency": 20,
+  "duration_seconds": 30,
+  "target_rps": 500,
+  "batch_size": 5,
+  "payload_type": "json"
+}

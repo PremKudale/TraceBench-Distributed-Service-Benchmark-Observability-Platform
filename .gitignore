@@ -1,0 +1,47 @@
+# Binaries and object files
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test and coverage artifacts
+*.test
+*.out
+coverage.html
+
+# Go workspace
+go.work
+
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+.mvn/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and databases
+*.log
+*.sqlite
+data/
+postgres-data/
+prometheus-data/
+grafana-data/
+
+# Benchmark temporary files
+benchmark_results.json

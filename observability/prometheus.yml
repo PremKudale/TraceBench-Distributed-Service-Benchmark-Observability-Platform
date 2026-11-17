@@ -1,0 +1,35 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 2s
+
+scrape_configs:
+  - job_name: "ingest-collector-go"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["ingest-collector:8081"]
+        labels:
+          service: "ingest-collector-go"
+          env: "production"
+
+  - job_name: "gateway-service-go"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["gateway-service:8080"]
+        labels:
+          service: "gateway-service-go"
+          env: "production"
+
+  - job_name: "order-service-java"
+    metrics_path: "/api/v1/orders/metrics"
+    static_configs:
+      - targets: ["order-service:8082"]
+        labels:
+          service: "order-service-java"
+          env: "production"
+
+  - job_name: "otel-collector"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["otel-collector:8889"]
+        labels:
+          service: "otel-collector"

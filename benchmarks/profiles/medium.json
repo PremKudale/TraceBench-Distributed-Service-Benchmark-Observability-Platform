@@ -1,0 +1,9 @@
+{
+  "profile": "medium",
+  "description": "Medium production workload with high concurrent client requests",
+  "concurrency": 100,
+  "duration_seconds": 60,
+  "target_rps": 2500,
+  "batch_size": 20,
+  "payload_type": "json"
+}

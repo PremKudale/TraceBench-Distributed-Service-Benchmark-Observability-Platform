@@ -1,0 +1,37 @@
+server:
+  port: 8082
+  shutdown: graceful
+
+spring:
+  application:
+    name: order-service-java
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+
+otel:
+  exporter:
+    otlp:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://otel-collector:4317}
+
+ingest:
+  collector:
+    url: ${INGEST_COLLECTOR_URL:http://localhost:8081/api/v1/logs/ingest}

@@ -1,0 +1,15 @@
+apiVersion: v2
+name: tracebench
+description: Helm chart for TraceBench Distributed Service Benchmark & Observability Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - observability
+  - opentelemetry
+  - benchmarking
+  - distributed-systems
+  - prometheus
+  - grafana
+maintainers:
+  - name: TraceBench Team

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tracebench
+  labels:
+    app.kubernetes.io/name: tracebench
+    app.kubernetes.io/part-of: tracebench-platform

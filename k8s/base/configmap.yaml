@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tracebench-config
+  namespace: tracebench
+data:
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  INGEST_HTTP_ADDR: ":8081"
+  INGEST_TCP_ADDR: ":5140"
+  WORKER_COUNT: "32"
+  QUEUE_CAPACITY: "100000"
+  BATCH_SIZE: "2000"
+  FLUSH_INTERVAL_MS: "100"
+  ORDER_SERVICE_URL: "http://order-service.tracebench.svc.cluster.local:8082"
+  INGEST_SERVICE_URL: "http://ingest-collector.tracebench.svc.cluster.local:8081"
+  OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.tracebench.svc.cluster.local:4318"
