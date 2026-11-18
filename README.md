@@ -3,7 +3,7 @@
 # ⚡ TraceBench
 ### Distributed Service Benchmark & Observability Platform
 
-*A high-throughput distributed log ingestion, automated benchmarking, and full-stack observability engine for Go & Java microservices.*
+*High-throughput distributed log ingestion, automated benchmarking suite, and real-time observability platform for Go & Java microservices.*
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=githubactions)](https://github.com/tracebench/tracebench/actions)
 [![Go Version](https://img.shields.io/badge/Go-1.22-00ADD8?style=for-the-badge&logo=go)](https://go.dev/)
@@ -18,45 +18,45 @@
 
 <br/>
 
-[🚀 Quickstart](#-quickstart-guide) •
-[🏛️ Architecture](#-system-architecture) •
-[📊 Benchmarks](#-benchmark-performance--sla-results) •
-[⚙️ Memory Optimization](#-memory-allocation-optimization-deep-dive) •
-[☸️ Kubernetes](#-production-kubernetes-deployment) •
-[🔌 API Docs](#-interactive-api-cheatsheet)
+[Quickstart](#quickstart-guide) •
+[Architecture](#system-architecture) •
+[Benchmarks](#benchmark-performance--sla-results) •
+[Memory Optimization](#memory-allocation-optimization-deep-dive) •
+[Kubernetes](#production-kubernetes-deployment) •
+[API Reference](#interactive-api-cheatsheet)
 
 ---
 
 </div>
 
-## 📑 Table of Contents
-- [✨ Key Platform Highlights](#-key-platform-highlights)
-- [🏛️ System Architecture](#-system-architecture)
+## Table of Contents
+- [Core Capabilities](#core-capabilities)
+- [System Architecture](#system-architecture)
   - [Distributed Trace Propagation Flow](#distributed-trace-propagation-flow)
   - [High-Throughput Ingestion Pipeline](#high-throughput-ingestion-pipeline)
-- [📊 Benchmark Performance & SLA Results](#-benchmark-performance--sla-results)
+- [Benchmark Performance & SLA Results](#benchmark-performance--sla-results)
   - [Multi-Workload Progression](#multi-workload-progression)
   - [Latency Percentiles Breakdown](#latency-percentiles-breakdown)
-- [⚙️ Memory Allocation Optimization Deep Dive](#-memory-allocation-optimization-deep-dive)
-- [🚀 Quickstart Guide](#-quickstart-guide)
-  - [1-Click Docker Compose Startup](#option-1-single-command-docker-compose-recommended)
+- [Memory Allocation Optimization Deep Dive](#memory-allocation-optimization-deep-dive)
+- [Quickstart Guide](#quickstart-guide)
+  - [Single-Command Docker Compose Startup](#option-1-single-command-docker-compose-recommended)
   - [Running Automated Benchmarks](#option-2-running-automated-benchmarks)
-  - [Kubernetes / Helm Deployment](#option-3-kubernetes--helm-deployment)
-- [🔌 Interactive API Cheatsheet](#-interactive-api-cheatsheet)
-- [📈 Observability & Grafana Dashboards](#-observability--grafana-dashboards)
-- [☸️ Production Kubernetes Deployment](#-production-kubernetes-deployment)
-- [🧪 Testing & Validation](#-testing--validation)
-- [🛠️ Developer CLI & Makefile](#-developer-cli--makefile)
-- [❓ Frequently Asked Questions](#-frequently-asked-questions)
+  - [Kubernetes & Helm Deployment](#option-3-kubernetes--helm-deployment)
+- [Interactive API Cheatsheet](#interactive-api-cheatsheet)
+- [Observability & Grafana Dashboards](#observability--grafana-dashboards)
+- [Production Kubernetes Deployment](#production-kubernetes-deployment)
+- [Testing & Verification](#testing--verification)
+- [Developer Tooling & Makefile](#developer-tooling--makefile)
+- [Architecture Decisions & FAQ](#architecture-decisions--faq)
 
 ---
 
-## ✨ Key Platform Highlights
+## Core Capabilities
 
 <table>
   <tr>
     <td width="50%">
-      <h3 align="center">⚡ High-Concurrency Ingestion</h3>
+      <h3 align="center">High-Concurrency Ingestion</h3>
       <ul>
         <li><b>Concurrent Go Workers:</b> Dynamically scaled worker pool (32 goroutines) with non-blocking ring-buffered queues.</li>
         <li><b>Memory Optimization:</b> <code>sync.Pool</code> buffer & struct pooling limits GC pause overhead to <b>&lt; 15 ms</b>.</li>
@@ -64,7 +64,7 @@
       </ul>
     </td>
     <td width="50%">
-      <h3 align="center">🔍 Real-Time Observability</h3>
+      <h3 align="center">Real-Time Observability</h3>
       <ul>
         <li><b>W3C Trace Context:</b> End-to-end distributed tracing across Go Gateway and Java 21 Order Service.</li>
         <li><b>Structured JSON Logs:</b> Zero-loss trace/span correlation via Logstash Logback & Go slog.</li>
@@ -74,15 +74,15 @@
   </tr>
   <tr>
     <td width="50%">
-      <h3 align="center">📊 Automated Benchmarking Suite</h3>
+      <h3 align="center">Automated Benchmarking Suite</h3>
       <ul>
-        <li><b>Workload Generator:</b> Profiles for <code>baseline</code>, <code>medium</code>, <code>stress</code>, and <code>spike</code> traffic.</li>
+        <li><b>Workload Generator:</b> Automated profiles for <code>baseline</code>, <code>medium</code>, <code>stress</code>, and <code>spike</code> traffic.</li>
         <li><b>Fine-Grained Telemetry:</b> P50, P90, P95, P99 latency percentiles, CPU utilization, and heap allocs/op.</li>
-        <li><b>Automated Reports:</b> Generates Markdown, JSON, and ASCII regression analysis tables.</li>
+        <li><b>Regression Reports:</b> Generates Markdown, JSON, and ASCII regression analysis tables.</li>
       </ul>
     </td>
     <td width="50%">
-      <h3 align="center">☸️ Production Cloud-Native</h3>
+      <h3 align="center">Production Cloud-Native</h3>
       <ul>
         <li><b>Zero-Downtime Updates:</b> Kubernetes rolling update strategy (<code>maxSurge: 25%</code>, <code>maxUnavailable: 0</code>).</li>
         <li><b>Health Checks:</b> Comprehensive <code>livenessProbe</code> and <code>readinessProbe</code> endpoints.</li>
@@ -94,7 +94,7 @@
 
 ---
 
-## 🏛️ System Architecture
+## System Architecture
 
 ### Distributed Trace Propagation Flow
 
@@ -103,13 +103,13 @@ The diagram below illustrates how client transactions flow through the platform 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Client as 🚀 Load Generator / Client
-    participant GW as 🌐 Gateway Service (Go)
-    participant Java as ☕ Order Service (Java 21)
-    participant Ingest as ⚡ Ingest Collector (Go)
-    participant DB as 🐘 PostgreSQL 16
-    participant Otel as 📡 OpenTelemetry / Jaeger
-    participant Prom as 📊 Prometheus & Grafana
+    actor Client as Load Generator / Client
+    participant GW as Gateway Service (Go)
+    participant Java as Order Service (Java 21)
+    participant Ingest as Ingest Collector (Go)
+    participant DB as PostgreSQL 16
+    participant Otel as OpenTelemetry / Jaeger
+    participant Prom as Prometheus & Grafana
 
     Client->>GW: POST /api/v1/orders (traceparent: 00-4bf9...-01)
     activate GW
@@ -177,9 +177,9 @@ sequenceDiagram
 
 ---
 
-## 📊 Benchmark Performance & SLA Results
+## Benchmark Performance & SLA Results
 
-TraceBench was rigorously evaluated using its automated load generation engine across four production traffic tiers. All tests were executed on Linux x86_64 with Go 1.22 and Temurin Java 21:
+TraceBench was evaluated using its automated load generation engine across four production traffic tiers. All tests were executed on Linux x86_64 with Go 1.22 and Temurin Java 21:
 
 ### Multi-Workload Progression
 
@@ -204,7 +204,7 @@ Spike      | 18,420.70 req/s    |  44.50 ms              | [██████�
 ```
 
 <details>
-<summary><b>🔍 Click to view Detailed JSON Benchmark Output</b></summary>
+<summary><b>Detailed JSON Benchmark Output</b></summary>
 
 ```json
 {
@@ -242,9 +242,9 @@ Spike      | 18,420.70 req/s    |  44.50 ms              | [██████�
 
 ---
 
-## ⚙️ Memory Allocation Optimization Deep Dive
+## Memory Allocation Optimization Deep Dive
 
-In high-volume distributed ingestion pipelines, repetitive allocations on the heap (`make([]byte, size)` or allocating fresh log record structs) lead to intense Garbage Collector (GC) pressure, triggering `stop-the-world` pauses that destroy tail latency (P99).
+In high-volume distributed ingestion pipelines, repetitive allocations on the heap (`make([]byte, size)` or allocating fresh log record structs) lead to intense Garbage Collector (GC) pressure, triggering `stop-the-world` pauses that degrade tail latency (P99).
 
 TraceBench implements an allocation-minimizing pipeline:
 
@@ -267,11 +267,11 @@ flowchart LR
 | **Performance Multiplier** | **16.4x faster** | **93.7% latency reduction** | **100% zero-alloc** | **Zero heap churn** |
 
 > [!TIP]
-> **Buffer Safety Guarantee:** The `BufferPool` enforces a hard cap (`maxSize: 1 MB`). If a rogue payload expands a buffer beyond this threshold, the buffer is dropped rather than recycled, preventing permanent heap bloating.
+> **Buffer Safety Guarantee:** The `BufferPool` enforces a hard cap (`maxSize: 1 MB`). If a payload expands a buffer beyond this threshold, the buffer is dropped rather than recycled, preventing permanent heap bloating.
 
 ---
 
-## 🚀 Quickstart Guide
+## Quickstart Guide
 
 ### Option 1: Single-Command Docker Compose (Recommended)
 
@@ -286,7 +286,7 @@ cd TraceBench
 docker compose up -d --build
 ```
 
-#### 🌐 Access Your Live Services:
+#### Service Endpoints:
 
 | Component | Port | URL | Default Credentials | Description |
 | :--- | :---: | :--- | :---: | :--- |
@@ -306,10 +306,10 @@ docker compose up -d --build
 Execute multi-workload benchmark sweeps using the automated Python orchestrator or the standalone Go CLI:
 
 <details open>
-<summary><b>▶️ Python Automated Runner (Multi-Profile)</b></summary>
+<summary><b>Python Automated Runner (Multi-Profile)</b></summary>
 
 ```bash
-# Run all benchmark tiers (Baseline ➔ Medium ➔ Stress ➔ Spike)
+# Run all benchmark tiers (Baseline -> Medium -> Stress -> Spike)
 python benchmarks/runner.py --profile all --output benchmarks/reports/comparison_report.md
 
 # Run a dedicated stress test with custom concurrency
@@ -319,7 +319,7 @@ python benchmarks/runner.py --profile stress --concurrency 300 --duration 20
 </details>
 
 <details>
-<summary><b>▶️ Native Go Benchmarker CLI</b></summary>
+<summary><b>Native Go Benchmarker CLI</b></summary>
 
 ```bash
 # Build and run native Go binary
@@ -330,10 +330,10 @@ go run ./cmd/benchmarker -profile stress -url http://localhost:8081/api/v1/logs/
 
 ---
 
-### Option 3: Kubernetes / Helm Deployment
+### Option 3: Kubernetes & Helm Deployment
 
 <details>
-<summary><b>☸️ Deploy with Kustomize (Click to expand)</b></summary>
+<summary><b>Deploy with Kustomize</b></summary>
 
 ```bash
 # Deploy base Kubernetes manifests
@@ -349,7 +349,7 @@ kubectl get hpa -n tracebench
 </details>
 
 <details>
-<summary><b>📦 Deploy with Helm (Click to expand)</b></summary>
+<summary><b>Deploy with Helm</b></summary>
 
 ```bash
 # Install Helm Chart into tracebench namespace
@@ -363,9 +363,9 @@ helm status tracebench -n tracebench
 
 ---
 
-## 🔌 Interactive API Cheatsheet
+## Interactive API Cheatsheet
 
-Test your live stack right from your terminal with these ready-to-run `curl` commands:
+Test your live stack right from your terminal with these ready-to-run commands:
 
 <details open>
 <summary><b>1. Submit Distributed Transaction through API Gateway</b></summary>
@@ -473,7 +473,7 @@ curl -s http://localhost:8081/api/v1/analytics/anomalies | jq .
 
 ---
 
-## 📈 Observability & Grafana Dashboards
+## Observability & Grafana Dashboards
 
 The platform automatically provisions three pre-configured dashboards in Grafana:
 
@@ -518,11 +518,11 @@ The platform automatically provisions three pre-configured dashboards in Grafana
 </table>
 
 > [!NOTE]
-> All dashboards are auto-mounted from `observability/grafana/dashboards/` upon container startup—no manual dashboard import needed!
+> All dashboards are auto-mounted from `observability/grafana/dashboards/` upon container startup—no manual dashboard import needed.
 
 ---
 
-## ☸️ Production Kubernetes Deployment
+## Production Kubernetes Deployment
 
 TraceBench is cloud-native and ready for Kubernetes clusters (EKS, GKE, AKS, or local Minikube/Kind):
 
@@ -530,7 +530,7 @@ TraceBench is cloud-native and ready for Kubernetes clusters (EKS, GKE, AKS, or 
 k8s/base/
 ├── namespace.yaml           # Dedicated 'tracebench' namespace
 ├── configmap.yaml           # Environment & tuning parameters
-├── secrets.yaml             # Encrypted credentials & database connection strings
+├── secrets.yaml             # Credentials & database connection strings
 ├── postgres.yaml            # StatefulSet with 20Gi PersistentVolumeClaim
 ├── otel-collector.yaml      # OTLP routing collector deployment & service
 ├── ingest-collector.yaml    # 3-replica collector with rolling updates & health probes
@@ -551,7 +551,7 @@ strategy:
 
 ---
 
-## 🧪 Testing & Validation
+## Testing & Verification
 
 ```bash
 # 1. Run Go unit & concurrency tests with race detector
@@ -573,9 +573,9 @@ python tests/load/simulate_production_traffic.py --duration 30 --concurrency 25
 
 ---
 
-## 🛠️ Developer CLI & Makefile
+## Developer Tooling & Makefile
 
-A rich `Makefile` is included for common developer workflows:
+A `Makefile` is included for common developer workflows:
 
 | Command | Action |
 | :--- | :--- |
@@ -591,7 +591,7 @@ A rich `Makefile` is included for common developer workflows:
 
 ---
 
-## ❓ Frequently Asked Questions
+## Architecture Decisions & FAQ
 
 <details>
 <summary><b>Why use PostgreSQL binary COPY instead of regular INSERT statements?</b></summary>
@@ -605,16 +605,13 @@ The Go Ingest Collector uses a bounded ring-buffered channel queue. When the que
 
 <details>
 <summary><b>Can TraceBench run without external PostgreSQL?</b></summary>
-Yes! The Ingest Collector includes a high-speed thread-safe in-memory storage fallback (<code>storage.NewMemoryStorage()</code>). If PostgreSQL is down or during localized micro-benchmarks, logs are retained in memory without failing requests.
+Yes. The Ingest Collector includes a high-speed thread-safe in-memory storage fallback (<code>storage.NewMemoryStorage()</code>). If PostgreSQL is down or during localized micro-benchmarks, logs are retained in memory without failing requests.
 </details>
 
 ---
 
 <div align="center">
 
-### Built with ❤️ for Distributed Systems & High-Throughput Observability
-
-[![GitHub Stars](https://img.shields.io/github/stars/tracebench/tracebench?style=social)](https://github.com/tracebench/tracebench)
-[![GitHub Forks](https://img.shields.io/github/forks/tracebench/tracebench?style=social)](https://github.com/tracebench/tracebench)
+Distributed under the Apache-2.0 License. Designed for high-throughput distributed systems benchmarking and observability.
 
 </div>
