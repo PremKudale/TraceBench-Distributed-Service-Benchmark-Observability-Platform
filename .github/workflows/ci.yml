@@ -21,8 +21,10 @@ jobs:
           go-version: '1.22'
           cache: true
 
-      - name: Verify Go Module Dependencies
-        run: go mod verify
+      - name: Download & Verify Go Modules
+        run: |
+          go mod download
+          go mod verify
 
       - name: Run Go Unit Tests
         run: go test -v -race ./services/ingest-collector-go/...
@@ -30,8 +32,8 @@ jobs:
       - name: Run Memory Allocation & Throughput Benchmarks
         run: |
           echo "Running buffer pool and parser benchmarks..."
-          go test -bench=. -benchmem ./services/ingest-collector-go/bufferpool/...
-          go test -bench=. -benchmem ./services/ingest-collector-go/parser/...
+          go test -bench="." -benchmem ./services/ingest-collector-go/bufferpool/...
+          go test -bench="." -benchmem ./services/ingest-collector-go/parser/...
 
   # 2. Test Java 21 Order Processing Microservice
   java-test:

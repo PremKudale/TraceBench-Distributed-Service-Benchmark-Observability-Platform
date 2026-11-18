@@ -2,7 +2,6 @@ package parser
 
 import (
 	"testing"
-	"time"
 
 	"github.com/tracebench/tracebench/services/ingest-collector-go/model"
 )

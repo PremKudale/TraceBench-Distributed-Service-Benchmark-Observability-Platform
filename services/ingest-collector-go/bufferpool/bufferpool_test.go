@@ -27,7 +27,7 @@ func TestBufferPool_GetPut(t *testing.T) {
 	}
 	pool.Put(buf2)
 
-	hits, misses, ratio := pool.Stats()
+	hits, _, ratio := pool.Stats()
 	if hits == 0 {
 		t.Errorf("expected > 0 hits, got %d", hits)
 	}
