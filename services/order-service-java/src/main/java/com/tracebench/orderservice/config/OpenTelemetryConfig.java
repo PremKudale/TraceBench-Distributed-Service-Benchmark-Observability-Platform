@@ -1,5 +1,7 @@
 package com.tracebench.orderservice.config;
 
+import io.micrometer.prometheus.PrometheusConfig;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Tracer;
@@ -24,6 +26,11 @@ public class OpenTelemetryConfig {
 
     @Value("${spring.application.name:order-service-java}")
     private String serviceName;
+
+    @Bean
+    public PrometheusMeterRegistry prometheusMeterRegistry() {
+        return new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+    }
 
     @Bean
     public OpenTelemetry openTelemetry() {
