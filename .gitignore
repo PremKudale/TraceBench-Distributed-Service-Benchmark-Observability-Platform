@@ -7,6 +7,9 @@ bin/
 *.dylib
 
 # Test and coverage artifacts
+__pycache__/
+*.py[cod]
+*$py.class
 *.test
 *.out
 coverage.html
