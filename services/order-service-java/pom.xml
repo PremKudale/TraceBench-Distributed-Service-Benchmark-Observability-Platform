@@ -58,11 +58,6 @@
             <artifactId>opentelemetry-exporter-otlp</artifactId>
             <version>${opentelemetry.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-semconv</artifactId>
-            <version>1.24.0-alpha</version>
-        </dependency>
 
         <!-- Structured JSON Logging (Logstash Logback Encoder) -->
         <dependency>

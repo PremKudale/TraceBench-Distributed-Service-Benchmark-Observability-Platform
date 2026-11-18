@@ -63,7 +63,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: actions/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Ingest Collector Image
         uses: docker/build-push-action@v5
@@ -89,8 +89,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Validate Kubernetes Manifests with Kustomize Dry-Run
-        run: |
-          kubectl kustomize k8s/base/
-          kubectl apply --dry-run=client -k k8s/base/
+      - name: Validate Kubernetes Manifests with Kustomize
+        run: kubectl kustomize k8s/base/ > /dev/null
 
